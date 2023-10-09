@@ -3,15 +3,22 @@ const Shows = require("../Model/Shows");
 const Archive = require("../Model/Archive")
 const Laptop = require('../Model/Laptop');
 const Kiosk = require('../Model/Kiosk'); 
-const Printer = require('../Model/Printer'); 
+const Bbw = require('../Model/Printers/Bbw'); 
+const Bcl = require('../Model/Printers/Bcl'); 
+const Epson = require('../Model/Printers/Epson'); 
+const Hpcl = require('../Model/Printers/Hpcl'); 
+const pendingShow = require('../Model/PendingShow'); 
+
+
 const Scanner = require('../Model/Scanner');
 const { fillPackingList } = require("../Pdf/fillablePdf");
 const fs = require('fs');
+const PendingShow = require("../Model/PendingShow");
 
 
 router.post("/update", async (req, res) => {
 
-
+console.log(req.body)
 
 
   const archiveData = new Archive(req.body);
@@ -47,15 +54,68 @@ req.body.kiosk.forEach(element => {
 
 req.body.printer.forEach(element => {
 
-  Printer.findOneAndUpdate({id: element.name}, {status: 'IN'})
-  .then(updateLaptop => {
-      if (updateLaptop) {
-          console.log('printer updated:', updateLaptop);
-        } else {
-          console.log('printer not found');
-        }
+    if(element.name.includes('BL')){
 
-  }); 
+      Bbw.findOneAndUpdate({id: element.name}, {status: 'IN'})
+      .then(updatePrinter => {
+          if (updatePrinter) {
+              console.log('printer updated:', updatePrinter);
+            } else {
+              console.log('pritner not found');
+            }
+  
+      })
+
+    }
+
+    if(element.name.includes('BCL')){
+
+      Bcl.findOneAndUpdate({id: element.name}, {status: 'IN'})
+      .then(updatePrinter => {
+          if (updatePrinter) {
+              console.log('printer updated:', updatePrinter);
+            } else {
+              console.log('pritner not found');
+            }
+  
+      })
+
+    }
+
+    if(element.name.includes('HPCL')){
+
+      Hpcl.findOneAndUpdate({id: element.name}, {status: 'IN'})
+      .then(updatePrinter => {
+          if (updatePrinter) {
+              console.log('printer updated:', updatePrinter);
+            } else {
+              console.log('pritner not found');
+            }
+  
+      })
+
+    }
+
+
+    if(element.name.includes('EKMS')){
+
+      Epson.findOneAndUpdate({id: element.name}, {status: 'IN'})
+      .then(updatePrinter => {
+          if (updatePrinter) {
+              console.log('printer updated:', updatePrinter);
+            } else {
+              console.log('pritner not found');
+            }
+  
+      })
+
+    }
+
+
+    
+      
+
+
   
 });
 
@@ -101,9 +161,8 @@ router.post("/add", async (req, res) => {
 
     //creating  packing list from data 
 
-    fillPackingList(req.body)
+    // fillPackingList(req.body)
 
-    setTimeout(() => {
         
     
 
@@ -118,6 +177,7 @@ router.post("/add", async (req, res) => {
     const idKiosk = req.body.kiosk; 
     const idPrinter = req.body.printer; 
     const idScanner= req.body.scanner; 
+    const showName = req.body.showname
 
 
     idLaptop.forEach(element => {
@@ -151,7 +211,9 @@ router.post("/add", async (req, res) => {
 
     idPrinter.forEach(element => {
 
-        Printer.findOneAndUpdate({id: element.name}, {status: 'OUT'})
+      if(element.name.includes('BL')){
+
+        Bbw.findOneAndUpdate({id: element.name}, {status: 'OUT'})
         .then(updatePrinter => {
             if (updatePrinter) {
                 console.log('printer updated:', updatePrinter);
@@ -160,13 +222,61 @@ router.post("/add", async (req, res) => {
               }
     
         })
+
+      }
+
+      if(element.name.includes('BCL')){
+
+        Bcl.findOneAndUpdate({id: element.name}, {status: 'OUT'})
+        .then(updatePrinter => {
+            if (updatePrinter) {
+                console.log('printer updated:', updatePrinter);
+              } else {
+                console.log('pritner not found');
+              }
+    
+        })
+
+      }
+
+      if(element.name.includes('HPCL')){
+
+        Hpcl.findOneAndUpdate({id: element.name}, {status: 'OUT'})
+        .then(updatePrinter => {
+            if (updatePrinter) {
+                console.log('printer updated:', updatePrinter);
+              } else {
+                console.log('pritner not found');
+              }
+    
+        })
+
+      }
+
+
+      if(element.name.includes('EKMS')){
+
+        Epson.findOneAndUpdate({id: element.name}, {status: 'OUT'})
+        .then(updatePrinter => {
+            if (updatePrinter) {
+                console.log('printer updated:', updatePrinter);
+              } else {
+                console.log('pritner not found');
+              }
+    
+        })
+
+      }
+
+
+      
         
     });
 
 
     idScanner.forEach(element => {
 
-        Laptop.findOneAndUpdate({id: element.name}, {status: 'OUT'})
+        Scanner.findOneAndUpdate({id: element.name}, {status: 'OUT'})
         .then(updateScanner => {
             if (updateScanner) {
                 console.log('scanner updated:', updateScanner);
@@ -182,6 +292,7 @@ router.post("/add", async (req, res) => {
 
         const savedShow =  newShow.save(); 
         res.status(200).json(savedShow); 
+        
     } 
 
     catch (err) {
@@ -190,7 +301,11 @@ router.post("/add", async (req, res) => {
     }
 
 
-}, 5000);
+
+
+
+
+    const removePendingShow =  await PendingShow.findOneAndRemove({customerName:showName}, {'_id':0})
 
 
    
