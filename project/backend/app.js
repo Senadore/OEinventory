@@ -16,6 +16,7 @@ const bbwRoute = require("./Routes/Printers/bbw")
 const bclRoute = require("./Routes/Printers/bcl")
 const hpclRoute = require("./Routes/Printers/hpcl")
 const epsonRoute = require("./Routes/Printers/epson")
+const invoiceGenRoute = require("./Routes/InoiceGen/index")
 
 var bodyParser = require('body-parser');
 const extractShow = require('./ImportShow');
@@ -103,8 +104,7 @@ app.use("/oe/api/printer/bbw", bbwRoute);
 app.use("/oe/api/printer/bcl", bclRoute)
 app.use("/oe/api/printer/hpcl", hpclRoute)
 app.use("/oe/api/printer/epson", epsonRoute)
-
-
+app.use("/oe/api/invoice/generate", invoiceGenRoute)
 app.use("/api/invoice", InvoiceRoute)
 
 var server = app.listen(8081, function () {
